@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package prototiger;
+option go_package = "./prototiger";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+/*
+* Base level structures
+*/
+
+/*
+* A node can send mesurements, recieve controll commands and has a status.
+* It is a part of a network therefor it has related nodes
+*/
+message Node {
+	  enum Type {
+		NODE_GROUP = 0;
+		GENERATOR = 1;
+		ALTERNATOR = 2;
+		CONVERTER = 3;
+		STORAGE = 4;
+	}
+
+	string id = 1;
+	Type type = 2;
+	map<string, Node> neighbours = 3;
+	Status status = 4;
+	repeated Measurement measurements = 5;
+	repeated ControlCommand commands = 6;
+	float x = 7;
+	float y = 8;
+}
+
+/*
+* A measurement can include data such as voltage, current, power, frequency, etc.
+*/
+message Measurement {
+  enum Type {
+    VOLTAGE = 0;
+    CURRENT = 1;
+    POWER = 2;
+    FREQUENCY = 3;
+    TEMPERATURE = 4;
+  }
+
+  Type type = 1;
+  double value = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+/*
+* Status can represent the state of various components like breakers, transformers, etc.
+*/
+message Status {
+  enum Type {
+    BREAKER = 0;
+    TRANSFORMER = 1;
+    GENERATOR = 2;
+  }
+
+  Type type = 1;
+  bool isActive = 2;
+  bool isAlarmed = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+/*
+* Control commands are used to control devices within the electrical network.
+*/
+message ControlCommand {
+  enum CommandType {
+    OPEN_BREAKER = 0;
+    CLOSE_BREAKER = 1;
+    INCREASE_GENERATION = 2;
+    DECREASE_GENERATION = 3;
+  }
+
+  CommandType commandType = 1;
+  string targetDeviceId = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+/*
+* Higher level structures that will use these basic types.
+* For example, a message that represents a complete snapshot of the system.
+*/
+
+/*
+* This can represent the entire system state at a specific point in time.
+*/
+message SystemSnapshot {
+  repeated Measurement measurements = 1;
+  repeated Status statuses = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+/*
+* Network comms
+* Requests / Responses
+*/
+
+message MonitoringDataRequest {
+  string deviceId = 1;
+  google.protobuf.Timestamp startTime = 2;
+  google.protobuf.Timestamp endTime = 3;
+}
+
+message MonitoringDataResponse {
+  repeated Measurement measurements = 1;
+  repeated Status statuses = 2;
+}
+
+message ControlCommandRequest {
+  ControlCommand command = 1;
+}
+
+message ControlCommandResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+/*
+* Network comms
+* Endpoints
+*/
+
+service ScadaService {
+  rpc GetMonitoringData (MonitoringDataRequest) returns (MonitoringDataResponse);
+  rpc SendControlCommand (ControlCommandRequest) returns (ControlCommandResponse);
+  rpc GetSystemSnapshot (google.protobuf.Empty) returns (SystemSnapshot);
+}

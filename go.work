@@ -1,0 +1,7 @@
+go 1.21.3
+
+use (
+	./common/protobuf/go/generated/prototiger
+	./image_generator
+	./server
+)
