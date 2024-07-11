@@ -15,7 +15,7 @@ import "google/protobuf/timestamp.proto";
 * It is a part of a network therefor it has related nodes
 */
 message Node {
-	  enum Type {
+	enum Type {
 		NODE_GROUP = 0;
 		GENERATOR = 1;
 		ALTERNATOR = 2;
@@ -25,7 +25,7 @@ message Node {
 
 	string id = 1;
 	Type type = 2;
-	map<string, Node> neighbours = 3;
+	repeated Node neighbours = 3;
 	Status status = 4;
 	repeated Measurement measurements = 5;
 	repeated ControlCommand commands = 6;

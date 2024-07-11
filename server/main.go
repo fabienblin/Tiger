@@ -20,6 +20,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	
 	log.Printf("Tiger server listening on 127.0.0.1:%s", port)
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Server failed to start: %s", err)
