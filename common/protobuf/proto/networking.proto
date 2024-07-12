@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package prototiger;
+option go_package = "./prototiger";
+
+import "google/protobuf/empty.proto";
+// import "google/protobuf/timestamp.proto";
+import "tiger.proto";
+
+message Tree {
+	repeated Node tree = 1;
+}
+
+service ImageDisplay {
+	rpc UpdateTree(google.protobuf.Empty) returns (stream Tree) {}
+}

@@ -17,7 +17,7 @@ all: generate-go
 # Generate Go code from Proto files
 .PHONY: generate-go
 generate-go: $(PROTO_FILES)
-	@echo -n "\nGenerating Go code from Proto files..."
+	@echo "Generating Go code from Proto files..."
 	@mkdir -p $(GO_OUT_DIR)
 	@$(PROTOC_CMD) --go_out=$(GO_OUT_DIR) --go-grpc_out=$(GO_OUT_DIR) --gorm_out=$(GO_OUT_DIR) --proto_path=$(PROTO_DIR) $(PROTO_FILES)
 	@cd $(GO_OUT_DIR)/prototiger && go mod init prototiger
